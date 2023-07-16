@@ -79,17 +79,17 @@ define(function(require) {
                     }
 
                     Promise.all([documentPromises, pdfLib.PDFDocument.create()])
-                        .then((resultDocument) => {
+                        .then(([_, resultDocument]) => {
                             for (let i = 0; i < resultDocuments.length; i++) {
                                 let doc = resultDocuments[i];
                                 for (let page = 0; page < doc.getPageCount(); page++) {
                                     resultDocument.addPage(doc.getPage(page));
                                 }
                             }
-                            return resultDocument.save();
+                            return resultDocument.saveAsBase64();
                         })
-                        .then(pdfBinary => {
-                            printService.OpenPrintDialog(pdfBinary);
+                        .then(pdfBase64 => {
+                            printService.OpenPrintDialog("data:application/pdf;base64," + pdfBase64);
                         })
                         .catch(error => {
                             handleErrors(error);
