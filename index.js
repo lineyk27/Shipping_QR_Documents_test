@@ -25,9 +25,9 @@ define(function(require) {
 
         this.onClick = function(itemKey, $event){
             this.isEnabled = () => false;
+            console.log($scope);
 
             let items = $scope.viewStats.get_selected_orders();
-            console.log($scope);
             if (!items || !items.length) {
                 return;
             };
