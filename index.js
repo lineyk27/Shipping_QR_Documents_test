@@ -26,7 +26,8 @@ define(function(require) {
         this.onClick = function(itemKey, $event){
             this.isEnabled = () => false;
 
-            var items = $scope.viewStats.get_selected_orders();
+            let items = $scope.viewStats.get_selected_orders();
+            console.log($scope);
             if (!items || !items.length) {
                 return;
             };
@@ -99,7 +100,7 @@ define(function(require) {
                     handleErrors(result.error);
                 };
             });
-            this.isEnabled = (itemKey) => true;
+            this.isEnabled = () => true;
         };
 
         function handleErrors (error) {
@@ -122,75 +123,3 @@ define(function(require) {
 
     placeholderManager.register("OpenOrders_OrderControlButtons", placeHolder);
 });
-
-
-// public class OrderDocuments
-// {
-//     public class OrderDocument
-//     {
-//         public string DocumentType { get; set; }
-//         public string DocumentBase64 { get; set; }
-//     }
-//     public Guid OrderId { get; set; }
-//     public string Country { get; set; }
-//     public string QRCodeBase64 { get; set; }
-//     public List<OrderDocument> Documents { get; set; } = new List<OrderDocument>();
-// }
-
-// const ordersService = new Services.OrdersService(vm);
-
-//             ordersService.getOrders(items, null, false, false, function (data) {
-//                 if (!data.error) {
-//                     let orders = data.result;
-//                     orders = orders.filter(item => {
-//                         let identifiers = item.GeneralInfo.Identifiers;
-//                         if (identifiers && identifiers.length) {
-//                             return identifiers.filter(i => i.Name == "Mona").length;
-//                         }
-//                         return false;
-//                     });
-                    
-//                     if (!orders.length) {
-//                         alert("Selected orders do not have 'Mona' identifier.")
-//                         return;
-//                     }
-
-//                     const printService = new Services.PrintService(vm);
-
-//                     printService.GetTemplateList("Invoice Template", function (data) {
-//                         if (!data.error) {
-//                             let templates = data.result;
-
-//                             for (let i = 0; i < orders.length; i++) {
-//                                 let order = orders[i];
-
-//                                 let orderDocuments = vm.templates[order.CustomerInfo.Address.Country];
-//                                 if (!orderDocuments) {
-//                                     continue;
-//                                 };
-//                             }
-                            
-//                             //foreach order in orders 
-//                             //generate defined templates
-//                             //for invoices add qr codes from extended properties
-//                             //add generated shipping labels
-
-//                             //error message way Core.Dialogs.error({message: "asdasd"});
-
-
-//                         } else {
-
-//                         }
-//                     });
-
-
-
-
-//                 } else {
-//                     // handle error message
-//                     alert(data.error.errorMessage);
-//                     return;
-//                 }
-//             });
-
-
