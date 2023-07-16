@@ -25,9 +25,8 @@ define(function(require) {
 
         this.onClick = function(itemKey, $event){
             this.isEnabled = () => false;
-            console.log($scope);
 
-            let items = $scope.viewStats.get_selected_orders();
+            let items = $scope.viewStats.selected_orders.map(i => i.id);
             if (!items || !items.length) {
                 return;
             };
@@ -87,10 +86,9 @@ define(function(require) {
                                     resultDocument.addPage(doc.getPage(page));
                                 }
                             }
-                            return resultDocument.saveAsBase64();
+                            return resultDocument.save();
                         })
-                        .then(base64 => {
-                            let pdfBinary = convertBase64ToBinary(base64);
+                        .then(pdfBinary => {
                             printService.OpenPrintDialog(pdfBinary);
                         })
                         .catch(error => {
@@ -107,18 +105,6 @@ define(function(require) {
             console.log("Printing MONA documents error");
             console.log(error);
         };
-
-        function convertBase64ToBinary(data) {
-            var raw = window.atob(data);
-            var rawLength = raw.length;
-            var array = new Uint8Array(new ArrayBuffer(rawLength));
-          
-            for(var i = 0; i < rawLength; i++) {
-              array[i] = raw.charCodeAt(i);
-            }
-            return array;
-          }
-
     };
 
     placeholderManager.register("OpenOrders_OrderControlButtons", placeHolder);
