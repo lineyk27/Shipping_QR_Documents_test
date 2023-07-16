@@ -1,32 +1,31 @@
-'use strict';
-
-// get selected orders ids
+"use strict";
 
 define(function(require) {
-    const pdfLib = require("./pdf-lib.js"); // please change on publish
+    const placeholderManager = require("core/placeholderManager");
+    //const pdfLib = require("./pdf-lib.js"); // please change on publish
+    const pdfLib = require("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.js"); // prod 
 
-    const placeHolder = function ($scope, $element, $http) {
+    const placeHolder = function ($scope) {
         this.templatQrs = {
             'Serbia': [
                 {
                     templateType: 'Invoice',
                     qrCode: { x: 100, y: 100, width: 100, height: 100 }
                 }
-            ],
-            'Croatia': [
             ]
         };
 
-        this.items = {
+        this.getItems = () => ([{
+            key: "placeholderPrintShippingDocumentsQR",
+            text: "Print QR shiping documents",
+            icon: "fa func fa-print"
+        }]);
 
-        };
+        this.isEnabled = () => true;
 
-        function handleErrors (error) {
-            console.log("Printing MONA documents error");
-            console.log(error);
-        }
+        this.onClick = function(itemKey, $event){
+            this.isEnabled = () => false;
 
-        $scope.onClick = function(itemKey, $event){
             var items = $scope.viewStats.get_selected_orders();
             if (!items || !items.length) {
                 return;
@@ -91,7 +90,7 @@ define(function(require) {
                         })
                         .then(base64 => {
                             let pdfBinary = convertBase64ToBinary(base64);
-                            new Services.PrintService().OpenPrintDialog(pdfBinary);
+                            printService.OpenPrintDialog(pdfBinary);
                         })
                         .catch(error => {
                             handleErrors(error);
@@ -99,8 +98,13 @@ define(function(require) {
                 } else {
                     handleErrors(result.error);
                 };
-            })
-            
+            });
+            this.isEnabled = (itemKey) => true;
+        };
+
+        function handleErrors (error) {
+            console.log("Printing MONA documents error");
+            console.log(error);
         };
 
         function convertBase64ToBinary(data) {
@@ -116,6 +120,7 @@ define(function(require) {
 
     };
 
+    placeholderManager.register("OpenOrders_OrderControlButtons", placeHolder);
 });
 
 
