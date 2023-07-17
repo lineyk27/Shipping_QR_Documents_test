@@ -45,7 +45,7 @@ define(function(require) {
                     const ordersDocuments = result.result;
 
                     let documentPromises = [];
-                    let resultDocuments = [];
+                    let resultDocumentPages = [];
                     for (let i = 0; i < ordersDocuments.length; i++) {
                         let orderDocuments = ordersDocuments[i];
                         let qrCode = orderDocuments.QRCodeBase64;
@@ -75,7 +75,10 @@ define(function(require) {
                                     return pdfDocument;
                                 })
                                 .then(pdfDocument => {
-                                    resultDocuments.push(pdfDocument);
+                                    return pdfDocument.copyPages();
+                                })
+                                .then(pages => {
+                                    resultDocumentPages.concat(pages);
                                 })
                                 .catch(error => {
                                     handleErrors(error);
@@ -84,13 +87,11 @@ define(function(require) {
                         }
                     }
 
-                    Promise.all([...documentPromises, pdfLib.PDFDocument.create()])
-                        .then(([_, resultDocument]) => {
-                            for (let i = 0; i < resultDocuments.length; i++) {
-                                let doc = resultDocuments[i];
-                                for (let page = 0; page < doc.getPageCount(); page++) {
-                                    resultDocument.addPage(doc.getPage(page));
-                                }
+                    Promise.all(documentPromises)
+                        .then(() => pdfLib.PDFDocument.create())
+                        .then((resultDocument) => {
+                            for (let i = 0; i < resultDocumentPages.length; i++) {
+                                resultDocument.addPage(resultDocumentPages[i]);
                             }
                             return resultDocument.saveAsBase64();
                         })
