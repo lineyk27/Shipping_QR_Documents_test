@@ -8,12 +8,10 @@ define(function(require) {
     const placeHolder = function ($scope) {
         const vm = this;
         vm.templateQrs = {
-            'Serbia': [
-                {
-                    templateType: 'Invoice',
-                    qrCode: { x: 100, y: 100, width: 100, height: 100 }
-                }
-            ]
+            'Serbia': {
+                templateType: 'Invoice',
+                qrCode: { x: 100, y: 100, width: 100, height: 100 }
+            }
         };
 
         vm.getItems = () => ([{
@@ -43,7 +41,7 @@ define(function(require) {
                     let resultDocuments = [];
                     for (let i = 0; i < ordersDocuments.length; i++) {
                         let orderDocuments = ordersDocuments[i];
-                        let qrCode = orderDocuments.QRCodebase64;
+                        let qrCode = orderDocuments.QRCodeBase64;
                         let docs = orderDocuments.Documents;
 
                         for (let i = 0; i < docs.length; i++) {
@@ -99,7 +97,7 @@ define(function(require) {
                     handleErrors(result.error);
                 };
             });
-            this.isEnabled = () => true;
+            vm.isEnabled = () => true;
         };
 
         function handleErrors (error) {
