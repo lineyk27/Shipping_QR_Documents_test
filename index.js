@@ -20,10 +20,17 @@ define(function(require) {
             icon: "fa func fa-print"
         }]);
 
-        vm.isEnabled = () => true;
+        vm.isLoading = true;
+
+        vm.isEnabled = () => {
+            if (vm.isLoading || !$scope.viewStats.selected_orders.length) {
+                return false
+            };
+            return true;
+        };
 
         vm.onClick = function(itemKey, $event){
-            vm.isEnabled = () => false;
+            vm.isLoading = true;
 
             let items = $scope.viewStats.selected_orders.map(i => i.id);
             if (!items || !items.length) {
@@ -97,7 +104,7 @@ define(function(require) {
                     handleErrors(result.error);
                 };
             });
-            vm.isEnabled = () => true;
+            vm.isLoading = false;
         };
 
         function handleErrors (error) {
