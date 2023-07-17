@@ -86,18 +86,15 @@ define(function(require) {
                         .then((resultDocument) => {
                             let copyPromises = [];
                             for (let i = 0; i < resultDocuments.length; i++) {
-                                let promise = resultDocument.copyPages(resultDocuments[i], getDocumentIndices(resultDocuments[i]));
+                                let promise = resultDocument.copyPages(resultDocuments[i], getDocumentIndices(resultDocuments[i]))
+                                    .then(pages => pages.forEach(page => resultDocument.addPage(page)));
                                 copyPromises.push(promise);
                             }
-                            return Promise.allSettled([...copyPromises, resultDocument.saveAsBase64()]);
+                            return Promise.all([...copyPromises, resultDocument.saveAsBase64()]);
                         })
                         .then(pages => {
-                            console.log(pages);
-                            let doc = pages[0].doc;
-                            return doc.saveAsBase64();
-                        })
-                        .then(pdfBase64 => {
-                            printService.OpenPrintDialog("data:application/pdf;base64," + pdfBase64);
+                            let docBase64 = pages[pages.length - 1];
+                            printService.OpenPrintDialog("data:application/pdf;base64," + docBase64);
                         })
                         .catch(error => {
                             handleErrors(error);
