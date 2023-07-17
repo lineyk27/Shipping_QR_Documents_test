@@ -77,7 +77,7 @@ define(function(require) {
                         }
                     }
 
-                    Promise.all([documentPromises, pdfLib.PDFDocument.create()])
+                    Promise.all([...documentPromises, pdfLib.PDFDocument.create()])
                         .then(([_, resultDocument]) => {
                             for (let i = 0; i < resultDocuments.length; i++) {
                                 let doc = resultDocuments[i];
