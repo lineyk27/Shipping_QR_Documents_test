@@ -42,7 +42,7 @@ define(function(require) {
                     const ordersDocuments = result.result;
 
                     let documentPromises = [];
-                    let resultDocumentPages = [];
+                    let resultDocuments = [];
                     for (let i = 0; i < ordersDocuments.length; i++) {
                         let orderDocuments = ordersDocuments[i];
                         let qrCode = orderDocuments.QRCodeBase64;
@@ -72,10 +72,7 @@ define(function(require) {
                                     return pdfDocument;
                                 })
                                 .then(pdfDocument => {
-                                    return pdfDocument.copyPages();
-                                })
-                                .then(pages => {
-                                    resultDocumentPages.concat(pages);
+                                    resultDocuments.push(pdfDocument);
                                 })
                                 .catch(error => {
                                     handleErrors(error);
@@ -87,8 +84,8 @@ define(function(require) {
                     Promise.all(documentPromises)
                         .then(() => pdfLib.PDFDocument.create())
                         .then((resultDocument) => {
-                            for (let i = 0; i < resultDocumentPages.length; i++) {
-                                resultDocument.addPage(resultDocumentPages[i]);
+                            for (let i = 0; i < resultDocuments.length; i++) {
+                                resultDocument.copyPages(resultDocuments[i], getDocumentIndices(resultDocuments[i]));
                             }
                             return resultDocument.saveAsBase64();
                         })
@@ -104,6 +101,14 @@ define(function(require) {
             });
             vm.isEnabled = () => true;
         };
+
+        function getDocumentIndices(pdfDoc){
+            let arr = [];
+            for(let i = 0; i < pdfDoc.getCountPages(); i++){
+                arr.push(i);
+            }
+            return arr;
+        }
 
         function handleErrors (error) {
             console.log("Printing MONA documents error");
