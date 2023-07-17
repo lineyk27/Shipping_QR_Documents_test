@@ -6,7 +6,8 @@ define(function(require) {
     const pdfLib = require("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.js"); // prod 
 
     const placeHolder = function ($scope) {
-        this.templateQrs = {
+        const vm = this;
+        vm.templateQrs = {
             'Serbia': [
                 {
                     templateType: 'Invoice',
@@ -15,16 +16,16 @@ define(function(require) {
             ]
         };
 
-        this.getItems = () => ([{
+        vm.getItems = () => ([{
             key: "placeholderPrintShippingDocumentsQR",
             text: "Print QR shiping documents",
             icon: "fa func fa-print"
         }]);
 
-        this.isEnabled = () => true;
+        vm.isEnabled = () => true;
 
-        this.onClick = function(itemKey, $event){
-            this.isEnabled = () => false;
+        vm.onClick = function(itemKey, $event){
+            vm.isEnabled = () => false;
 
             let items = $scope.viewStats.selected_orders.map(i => i.id);
             if (!items || !items.length) {
@@ -47,7 +48,7 @@ define(function(require) {
 
                         for (let i = 0; i < docs.length; i++) {
                             let document = docs[i];
-                            let templatQr = this.templateQrs[orderDocuments.Country];
+                            let templatQr = vm.templateQrs[orderDocuments.Country];
                             
                             let promise = pdfLib.PDFDocument.load(document.DocumentBase64)
                                 .then(pdfDocument => {
