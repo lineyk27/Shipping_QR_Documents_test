@@ -53,7 +53,7 @@ define(function(require) {
                                     if (!!templateQr && templateQr.templateType === document.TemplateType) {
                                         return Promise.all([pdfDocument.embedPng(qrCode), pdfDocument]);
                                     }
-                                    return [null, pdfDoc];
+                                    return [null, pdfDocument];
                                 })
                                 .then(([image, pdfDocument]) => {
                                     if (image) {
@@ -67,8 +67,8 @@ define(function(require) {
                                     }
                                     return pdfDocument;
                                 })
-                                .then(pdfDoc => {
-                                    resultDocuments.push(pdfDoc);
+                                .then(pdfDocument => {
+                                    resultDocuments.push(pdfDocument);
                                 })
                                 .catch(error => {
                                     handleErrors(error);
