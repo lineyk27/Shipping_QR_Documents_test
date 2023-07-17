@@ -46,29 +46,29 @@ define(function(require) {
 
                         for (let i = 0; i < docs.length; i++) {
                             let document = docs[i];
-                            let templatQr = vm.templateQrs[orderDocuments.Country];
+                            let templateQr = vm.templateQrs[orderDocuments.Country];
                             
                             let promise = pdfLib.PDFDocument.load(document.DocumentBase64)
                                 .then(pdfDocument => {
-                                    if (!!templatQr && templatQr.templateType === document.TemplateType) {
+                                    if (!!templateQr && templateQr.templateType === document.TemplateType) {
                                         return Promise.all([pdfDocument.embedPng(qrCode), pdfDocument]);
                                     }
                                     return [null, pdfDoc];
                                 })
-                                .then(([image, pdfDoc]) => {
+                                .then(([image, pdfDocument]) => {
                                     if (image) {
                                         let firstPage = pdfDocument.getPages()[0];
-                                        firstPage.drawImage(img, {
+                                        firstPage.drawImage(image, {
                                             x: templateQr.qrCode.x,
                                             y: templateQr.qrCode.y,
                                             width: templateQr.qrCode.width,
                                             height: templateQr.qrCode.height,
                                         });
                                     }
-                                    return pdfDoc;
+                                    return pdfDocument;
                                 })
                                 .then(pdfDoc => {
-                                    resultDocuments.drawImage(pdfDoc);
+                                    resultDocuments.push(pdfDoc);
                                 })
                                 .catch(error => {
                                     handleErrors(error);
