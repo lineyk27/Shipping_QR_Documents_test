@@ -6,7 +6,7 @@ define(function(require) {
     const pdfLib = require("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.js"); // prod 
 
     const placeHolder = function ($scope) {
-        $scope.templatQrs = {
+        this.templateQrs = {
             'Serbia': [
                 {
                     templateType: 'Invoice',
@@ -47,7 +47,7 @@ define(function(require) {
 
                         for (let i = 0; i < docs.length; i++) {
                             let document = docs[i];
-                            let templatQr = $scope.templatQrs[orderDocuments.Country];
+                            let templatQr = this.templateQrs[orderDocuments.Country];
                             
                             let promise = pdfLib.PDFDocument.load(document.DocumentBase64)
                                 .then(pdfDocument => {
