@@ -84,10 +84,17 @@ define(function(require) {
                     Promise.all(documentPromises)
                         .then(() => pdfLib.PDFDocument.create())
                         .then((resultDocument) => {
+                            let copyPromises = [];
                             for (let i = 0; i < resultDocuments.length; i++) {
-                                resultDocument.copyPages(resultDocuments[i], getDocumentIndices(resultDocuments[i]));
+                                let promise = resultDocument.copyPages(resultDocuments[i], getDocumentIndices(resultDocuments[i]));
+                                copyPromises.push(promise);
                             }
-                            return resultDocument.saveAsBase64();
+                            return Promise.allSettled([...copyPromises, resultDocument.saveAsBase64()]);
+                        })
+                        .then(pages => {
+                            console.log(pages);
+                            let doc = pages[0].doc;
+                            return doc.saveAsBase64();
                         })
                         .then(pdfBase64 => {
                             printService.OpenPrintDialog("data:application/pdf;base64," + pdfBase64);
@@ -104,7 +111,7 @@ define(function(require) {
 
         function getDocumentIndices(pdfDoc){
             let arr = [];
-            for(let i = 0; i < pdfDoc.getCountPages(); i++){
+            for(let i = 0; i < pdfDoc.getPageCount(); i++){
                 arr.push(i);
             }
             return arr;
