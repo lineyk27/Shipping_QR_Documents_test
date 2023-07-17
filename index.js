@@ -23,14 +23,11 @@ define(function(require) {
         vm.isLoading = true;
 
         vm.isEnabled = () => {
-            if (vm.isLoading || !$scope.viewStats.selected_orders.length) {
-                return false
-            };
             return true;
         };
 
         vm.onClick = function(itemKey, $event){
-            vm.isLoading = true;
+            vm.isEnabled = () => false;
 
             let items = $scope.viewStats.selected_orders.map(i => i.id);
             if (!items || !items.length) {
@@ -105,7 +102,7 @@ define(function(require) {
                     handleErrors(result.error);
                 };
             });
-            vm.isLoading = false;
+            vm.isEnabled = () => true;
         };
 
         function handleErrors (error) {
