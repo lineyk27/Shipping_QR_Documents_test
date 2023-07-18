@@ -2,7 +2,6 @@
 
 define(function(require) {
     const placeholderManager = require("core/placeholderManager");
-    //const pdfLib = require("./pdf-lib.js"); // please change on publish
     const pdfLib = require("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.js"); // prod 
 
     const placeHolder = function ($scope) {
@@ -16,7 +15,7 @@ define(function(require) {
 
         vm.getItems = () => ([{
             key: "placeholderPrintShippingDocumentsQR",
-            text: "Print QR shiping documents",
+            text: "Print Shipping Documents",
             icon: "fa func fa-print"
         }]);
 
