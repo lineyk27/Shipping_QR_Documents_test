@@ -22,9 +22,7 @@ define(function(require) {
 
         vm.isLoading = true;
 
-        vm.isEnabled = () => {
-            return true;
-        };
+        vm.isEnabled = () => true;
 
         vm.onClick = function(itemKey, $event){
             vm.isEnabled = () => false;
@@ -54,10 +52,10 @@ define(function(require) {
                             
                             let promise = pdfLib.PDFDocument.load(document.DocumentBase64)
                                 .then(pdfDocument => {
-                                    if (!!templateQr && templateQr.templateType === document.TemplateType) {
+                                    if (!!templateQr && templateQr.templateType === document.DocumentType) {
                                         return Promise.all([pdfDocument.embedPng(qrCode), pdfDocument]);
                                     }
-                                    return [null, pdfDocument];
+                                    return Promise.all[null, pdfDocument];
                                 })
                                 .then(([image, pdfDocument]) => {
                                     if (image) {
@@ -86,14 +84,16 @@ define(function(require) {
                         .then((resultDocument) => {
                             let copyPromises = [];
                             for (let i = 0; i < resultDocuments.length; i++) {
-                                let promise = resultDocument.copyPages(resultDocuments[i], getDocumentIndices(resultDocuments[i]))
-                                    .then(pages => pages.forEach(page => resultDocument.addPage(page)));
+                                let promise = resultDocument.copyPages(resultDocuments[i], getDocumentIndices(resultDocuments[i]));
                                 copyPromises.push(promise);
                             }
-                            return Promise.all([...copyPromises, resultDocument.saveAsBase64()]);
+                            return Promise.all([Promise.All(copyPromises), resultDocument]);
                         })
-                        .then(pages => {
-                            let docBase64 = pages[pages.length - 1];
+                        .then(([docPages, resultDocument]) => {
+                            docPages.forEach(pages => pages.forEach(page => resultDocument.addPage(page)));
+                            return resultDocument.saveAsBase64();
+                        })
+                        .then(docBase64 => {
                             printService.OpenPrintDialog("data:application/pdf;base64," + docBase64);
                         })
                         .catch(error => {
