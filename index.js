@@ -2,7 +2,7 @@
 
 define(function(require) {
     const placeholderManager = require("core/placeholderManager");
-    const pdfLib = require("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.js"); // prod 
+    const pdfLib = require("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.js");
 
     const placeHolder = function ($scope) {
         const vm = this;
@@ -51,10 +51,10 @@ define(function(require) {
                             
                             let promise = pdfLib.PDFDocument.load(document.DocumentBase64)
                                 .then(pdfDocument => {
-                                    if (!!templateQr && templateQr.templateType === document.DocumentType) {
+                                    if (!!templateQr && templateQr.templateType === document.DocumentType && qrCode) {
                                         return Promise.all([pdfDocument.embedPng(qrCode), pdfDocument]);
                                     }
-                                    return Promise.all[null, pdfDocument];
+                                    return Promise.all([null, pdfDocument]);
                                 })
                                 .then(([image, pdfDocument]) => {
                                     if (image) {
@@ -86,7 +86,7 @@ define(function(require) {
                                 let promise = resultDocument.copyPages(resultDocuments[i], getDocumentIndices(resultDocuments[i]));
                                 copyPromises.push(promise);
                             }
-                            return Promise.all([Promise.All(copyPromises), resultDocument]);
+                            return Promise.all([Promise.all(copyPromises), resultDocument]);
                         })
                         .then(([docPages, resultDocument]) => {
                             docPages.forEach(pages => pages.forEach(page => resultDocument.addPage(page)));
