@@ -9,7 +9,7 @@ define(function(require) {
         vm.templateQrs = {
             'Serbia': {
                 templateType: 'Invoice',
-                qrCode: { x: 100, y: 100, width: 100, height: 100 }
+                qrCode: { x: 556, y: 547, width: 180, height: 151 }
             }
         };
 
@@ -34,7 +34,7 @@ define(function(require) {
             const macroService = new Services.MacroService();
             const printService = new Services.PrintService();
 
-            macroService.Run({applicationName: "Test_print_qr_code", macroName: "Test_print_qr_code", orderIds: items}, function (result) { // change before publish
+            macroService.Run({applicationName: "Shipping_QR_Documents_App", macroName: "Shipping_QR_Documents_Macro", orderIds: items}, function (result) { // change before publish
                 if (!result.error) {
                     const ordersDocuments = result.result;
 
@@ -114,7 +114,7 @@ define(function(require) {
         }
 
         function handleErrors (error) {
-            console.log("Printing MONA documents error");
+            console.log("Printing shipping QR documents error: ");
             console.log(error);
         };
     };
