@@ -34,7 +34,7 @@ define(function(require) {
             const macroService = new Services.MacroService();
             const printService = new Services.PrintService();
 
-            macroService.Run({applicationName: "Shipping_QR_Documents_App", macroName: "Shipping_QR_Documents_Macro", orderIds: items}, function (result) { // change before publish
+            macroService.Run({applicationName: "Test_print_qr_code", macroName: "Test_print_qr_code", orderIds: items}, function (result) { // change before publish
                 if (!result.error) {
                     const ordersDocuments = result.result;
 
