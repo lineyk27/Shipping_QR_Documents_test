@@ -23,7 +23,7 @@ define(function(require) {
             vm.templateQrs = {
                 'Serbia': {
                     templateType: 'Invoice',
-                    qrCode: { x: 456, y: 447, width: 180, height: 151 }
+                    qrCode: { x: 406, y: 407, width: 150, height: 121 }
                 }
             };
 
