@@ -6,12 +6,6 @@ define(function(require) {
 
     const placeHolder = function ($scope) {
         const vm = this;
-        vm.templateQrs = {
-            'Serbia': {
-                templateType: 'Invoice',
-                qrCode: { x: 456, y: 447, width: 180, height: 151 }
-            }
-        };
 
         vm.getItems = () => ([{
             key: "placeholderPrintShippingDocumentsQR",
@@ -25,6 +19,13 @@ define(function(require) {
 
         vm.onClick = function(itemKey, $event){
             vm.isEnabled = () => false;
+
+            vm.templateQrs = {
+                'Serbia': {
+                    templateType: 'Invoice',
+                    qrCode: { x: 456, y: 447, width: 180, height: 151 }
+                }
+            };
 
             let items = $scope.viewStats.selected_orders.map(i => i.id);
             if (!items || !items.length) {
