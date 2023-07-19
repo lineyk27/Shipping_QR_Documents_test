@@ -44,6 +44,7 @@ define(function(require) {
             };
 
             let items = $scope.viewStats.selected_orders.map(i => i.id);
+            
             if (!items || !items.length) {
                 return;
             };
