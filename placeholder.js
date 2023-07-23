@@ -48,7 +48,7 @@ define(function(require) {
                         let orderDocuments = ordersDocuments[i];
 
                         for (let j = 0; j < orderDocuments.Documents.length; j++) {
-                            let document = orderDocuments.Documents[i];
+                            let document = orderDocuments.Documents[j];
                             let qrTemplate = vm.templateQrs[document.DocumentName];
                             
                             let promise = pdfLib.PDFDocument.load(document.DocumentBase64)
