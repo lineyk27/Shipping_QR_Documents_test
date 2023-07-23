@@ -9,38 +9,23 @@ define(function(require) {
 
         vm.getItems = () => ([{
             key: "placeholderPrintShippingDocumentsQR",
-            text: "Print Shipping Documents",
+            text: "Print Shipping Documents (test)",
             icon: "fa func fa-print"
         }]);
 
         vm.isLoading = true;
 
-        vm.isEnabled = () => true;
+        vm.isEnabled = (itemKey) => true;
 
         vm.onClick = function(itemKey, $event){
             vm.isEnabled = () => false;
 
             vm.templateQrs = {
-                'Serbia': {
-                    templateType: 'Invoice',
-                    qrCode: { x: 406, y: 407, width: 150, height: 131 }
-                },
-                'Croatia': {
-                    templateType: 'Invoice',
-                    qrCode: { x: 406, y: 407, width: 150, height: 131 }
-                },
-                'Bosnia and Herzegovina': {
-                    templateType: 'Invoice',
-                    qrCode: { x: 406, y: 407, width: 150, height: 131 }
-                },
-                'North Macedonia': {
-                    templateType: 'Invoice',
-                    qrCode: { x: 406, y: 407, width: 150, height: 131 }
-                },
-                'Montenegro': {
-                    templateType: 'Invoice',
-                    qrCode: { x: 406, y: 407, width: 150, height: 131 }
-                }
+                "Racun - RS": { x: 417, y: 420, width: 135, height: 112 },
+                "Racun - HR": { x: 417, y: 420, width: 135, height: 112 },
+                "Racun - BA": { x: 417, y: 420, width: 135, height: 112 },
+                "Racun - MK": { x: 417, y: 420, width: 135, height: 112 },
+                "Racun - ME": { x: 417, y: 420, width: 135, height: 112 }
             };
 
             let items = $scope.viewStats.selected_orders.map(i => i.id);
@@ -58,19 +43,18 @@ define(function(require) {
 
                     let documentPromises = [];
                     let resultDocuments = [];
+                    let docIndex = 0;
                     for (let i = 0; i < ordersDocuments.length; i++) {
                         let orderDocuments = ordersDocuments[i];
-                        let qrCode = orderDocuments.QRCodeBase64;
-                        let docs = orderDocuments.Documents;
 
-                        for (let i = 0; i < docs.length; i++) {
-                            let document = docs[i];
-                            let templateQr = vm.templateQrs[orderDocuments.Country];
+                        for (let j = 0; j < orderDocuments.Documents.length; j++) {
+                            let document = orderDocuments.Documents[i];
+                            let qrTemplate = vm.templateQrs[document.DocumentName];
                             
                             let promise = pdfLib.PDFDocument.load(document.DocumentBase64)
                                 .then(pdfDocument => {
-                                    if (!!templateQr && templateQr.templateType === document.DocumentType && qrCode) {
-                                        return Promise.all([pdfDocument.embedPng(qrCode), pdfDocument]);
+                                    if (!!qrTemplate && orderDocuments.QRCodeBase64) {
+                                        return Promise.all([pdfDocument.embedPng(orderDocuments.QRCodeBase64), pdfDocument]);
                                     }
                                     return Promise.all([null, pdfDocument]);
                                 })
@@ -78,21 +62,22 @@ define(function(require) {
                                     if (image) {
                                         let firstPage = pdfDocument.getPages()[0];
                                         firstPage.drawImage(image, {
-                                            x: templateQr.qrCode.x,
-                                            y: templateQr.qrCode.y,
-                                            width: templateQr.qrCode.width,
-                                            height: templateQr.qrCode.height,
+                                            x: qrTemplate.x,
+                                            y: qrTemplate.y,
+                                            width: qrTemplate.width,
+                                            height: qrTemplate.height,
                                         });
                                     }
                                     return pdfDocument;
                                 })
                                 .then(pdfDocument => {
-                                    resultDocuments.push(pdfDocument);
+                                    resultDocuments.push({ index: docIndex, pdfDocument});
                                 })
                                 .catch(error => {
                                     handleErrors(error);
                                 });
                             documentPromises.push(promise);
+                            docIndex++;
                         }
                     }
 
@@ -100,10 +85,11 @@ define(function(require) {
                         .then(() => pdfLib.PDFDocument.create())
                         .then((resultDocument) => {
                             let copyPromises = [];
+                            resultDocuments.sort((left, right) => left.index - right.index);
                             for (let i = 0; i < resultDocuments.length; i++) {
-                                let promise = resultDocument.copyPages(resultDocuments[i], getDocumentIndices(resultDocuments[i]));
+                                let promise = resultDocument.copyPages(resultDocuments[i].pdfDocument, getDocumentIndices(resultDocuments[i].pdfDocument));
                                 copyPromises.push(promise);
-                            }
+                            };
                             return Promise.all([Promise.all(copyPromises), resultDocument]);
                         })
                         .then(([docPages, resultDocument]) => {
