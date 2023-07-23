@@ -50,7 +50,7 @@ define(function(require) {
                         for (let j = 0; j < orderDocuments.Documents.length; j++) {
                             let document = orderDocuments.Documents[j];
                             let qrTemplate = vm.templateQrs[document.DocumentName];
-                            
+                            let order = docIndex;
                             let promise = pdfLib.PDFDocument.load(document.DocumentBase64)
                                 .then(pdfDocument => {
                                     if (!!qrTemplate && orderDocuments.QRCodeBase64) {
@@ -71,13 +71,13 @@ define(function(require) {
                                     return pdfDocument;
                                 })
                                 .then(pdfDocument => {
-                                    resultDocuments.push({ index: docIndex, pdfDocument});
+                                    resultDocuments.push({ index: order, pdfDocument});
                                 })
                                 .catch(error => {
                                     handleErrors(error);
                                 });
                             documentPromises.push(promise);
-                            docIndex++;
+                            ++docIndex;
                         }
                     }
 
