@@ -8,7 +8,7 @@ define(function(require) {
         const vm = this;
 
         vm.getItems = () => ([{
-            key: "placeholderPrintShippingDocumentsQR",
+            key: "randomPlaceholder123",
             text: "PROCESSED ORDER BUTTON",
             icon: "fa func fa-print"
         }]);
