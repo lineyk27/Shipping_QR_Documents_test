@@ -9,7 +9,7 @@ define(function(require) {
 
         vm.getItems = () => ([{
             key: "placeholderPrintShippingDocumentsQR",
-            text: "Print Shipping Documents(test)",
+            text: "Štampanje dokumenata",
             icon: "fa func fa-print"
         }]);
 
@@ -45,7 +45,7 @@ define(function(require) {
                         return;
                     };
 
-                    const ordersDocuments = result.result.Documents;
+                    const ordersDocuments = result.result.OrderDocuments;
 
                     let documentPromises = [];
                     let resultDocuments = [];
