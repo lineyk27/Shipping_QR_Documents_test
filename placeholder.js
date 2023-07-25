@@ -9,7 +9,7 @@ define(function(require) {
 
         vm.getItems = () => ([{
             key: "placeholderPrintShippingDocumentsQR",
-            text: "Štampanje dokumenata",
+            text: "PROCESSED ORDER BUTTON",
             icon: "fa func fa-print"
         }]);
 
@@ -129,5 +129,5 @@ define(function(require) {
         };
     };
 
-    placeholderManager.register("OpenOrders_OrderControlButtons", placeHolder);
+    placeholderManager.register("OpenOrders_ProcessOrders_RightBottomButtons", placeHolder);
 });
