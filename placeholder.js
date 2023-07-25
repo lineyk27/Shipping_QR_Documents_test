@@ -13,8 +13,6 @@ define(function(require) {
             icon: "fa func fa-print"
         }]);
 
-        vm.isLoading = true;
-
         vm.isEnabled = (itemKey) => true;
 
         vm.onClick = function(itemKey, $event){
@@ -39,7 +37,15 @@ define(function(require) {
 
             macroService.Run({applicationName: "ShippingQRDocuments_App", macroName: "Shipping_QR_Documents", orderIds: items}, function (result) {
                 if (!result.error) {
-                    const ordersDocuments = result.result;
+
+                    if (result.result.PrintErrors.length > 0) {
+                        result.result.PrintErrors.forEach(printError => {
+                            Core.Dialogs.addNotify(printError, 'ERROR');
+                        });
+                        return;
+                    };
+
+                    const ordersDocuments = result.result.Documents;
 
                     let documentPromises = [];
                     let resultDocuments = [];
