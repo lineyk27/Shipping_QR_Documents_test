@@ -13,8 +13,8 @@ define(function(require) {
         vm.button = document.getElementById('datepicker');
 
         vm.getItems = () => ([{
-            key: "randomPlaceholder123",
-            text: "PROCESSED ORDER BUTTON",
+            key: "placeholderSetDeliveryDateOrders",
+            text: "Set delivery dates",
             icon: "fa func fa-print"
         }]);
 
@@ -88,5 +88,5 @@ define(function(require) {
         };
     };
 
-    placeholderManager.register("OpenOrders_ProcessOrders_RightBottomButtons", placeHolder);// todo change
+    placeholderManager.register("OpenOrders_OrderControlButtons", placeHolder);
 });
