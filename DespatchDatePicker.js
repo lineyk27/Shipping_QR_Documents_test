@@ -5,13 +5,20 @@ define(function(require) {
     const datepicker = require("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.js");
     
     const placeHolder = function ($scope, $element, $http) {
-        const buttonName = "Set delivery date.";
-        const ordersService = new Services.OrdersService(vm);
-        let selectedOrders = [];
+        const vm = this;
+        vm.buttonName = "Set delivery date.";
+        vm.ordersService = new Services.OrdersService(vm);
+        vm.selectedOrders = [];
 
-        let button = document.getElementById('datepicker');
+        vm.button = document.getElementById('datepicker');
 
-        const picker = new easepick.create({
+        vm.getItems = () => ([{
+            key: "randomPlaceholder123",
+            text: "PROCESSED ORDER BUTTON",
+            icon: "fa func fa-print"
+        }]);
+
+        vm.picker = new easepick.create({
             element: button,
             css: [ 'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',],
             autoApply: false,
@@ -35,9 +42,9 @@ define(function(require) {
             }
         }, true);
 
-        $scope.isEnabled = () => false;
+        vm.isEnabled = (itemKey) => false;
 
-        $scope.onClick = function(itemKey, $event){
+        vm.onClick = function(itemKey, $event){
             selectedOrders = items;
             setPopoverOpen(true);
         };
