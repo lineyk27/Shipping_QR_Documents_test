@@ -52,12 +52,14 @@ define(function(require) {
 
         vm.onApproveSelectDate = function(){
             let date = "";// format - 2023-09-16T12:47:07.05Z
-            let items = $scope.viewStats.get_selected_orders();
+            let items = $scope.viewStats.selected_orders.map(i => i.id);
             console.log(items);
             console.log(date);
             ordersService.getOrders(items, null, true, true, function(response){
                 let orders = response.result;
                 for(let order of orders){
+                    console.log("seting order general info");
+                    console.log(order);
                     ordersService.setOrderGeneralInfo(order.OrderId, {
                         ReceivedDate: order.GeneralInfo.ReceivedDate,
                         Source: order.GeneralInfo.Source,
@@ -77,9 +79,9 @@ define(function(require) {
 
         vm.setPopoverOpen = function(isOpen){
             if(isOpen){
-                picker.show()
+                vm.picker.show()
             }else{
-                picker.hide();
+                vm.picker.hide();
             }
         };
 
