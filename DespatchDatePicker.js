@@ -39,8 +39,8 @@ define(function(require) {
                     },
                     setup(picker){
                         picker.on('select', (e) => {
-                            // const { view, date, target } = e.detail;
-                            vm.onApproveSelectDate();
+                            const { date } = e.detail;
+                            vm.onApproveSelectDate(date);
                             button.innerHTML = vm.buttonName;
                         });
                     },
@@ -50,8 +50,7 @@ define(function(require) {
             vm.setPopoverOpen(true);
         };
 
-        vm.onApproveSelectDate = function(){
-            let date = "";// format - 2023-09-16T12:47:07.05Z
+        vm.onApproveSelectDate = function(date){
             vm.selectedOrders = $scope.viewStats.selected_orders.map(i => i.id);
             vm.ordersService.getOrders(vm.selectedOrders, null, true, true, function(response){
                 let orders = response.result;
@@ -67,7 +66,7 @@ define(function(require) {
                         HasScheduledDelivery: true,
                         DespatchByDate: order.GeneralInfo.DespatchByDate,
                         ScheduledDelivery: {
-                            From: date,
+                            From: date.format("YYYY-MM-DDTHH:mm:ss.sssZ"),
                             To: date
                         },
                     }, false, () => vm.onUpdateGeneralInfo(order.OrderId));// todo: check is draft
