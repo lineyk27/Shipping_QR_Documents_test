@@ -27,7 +27,7 @@ define(function(require) {
             }
         }, true);
 
-        vm.isEnabled = (itemKey) => false;
+        vm.isEnabled = (itemKey) => true;
 
         vm.onClick = function(itemKey, $event){
             selectedOrders = items;
