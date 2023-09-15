@@ -44,7 +44,8 @@ define(function(require) {
                             $scope.onApproveSelectDate();
                             button.innerHTML = vm.buttonName;
                         });
-                    }
+                    },
+                    zIndex: 100
                 });
             }
             vm.setPopoverOpen(true);
