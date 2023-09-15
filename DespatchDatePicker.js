@@ -2,7 +2,7 @@
 
 define(function(require) {
     const placeholderManager = require("core/placeholderManager");
-    const datepicker = require("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.js");
+    const datepicker = require("https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.umd.min.js");
     
     const placeHolder = function ($scope, $element, $http) {
         const vm = this;
@@ -13,12 +13,12 @@ define(function(require) {
         vm.button = document.getElementById('datepicker');
 
         vm.getItems = () => ([{
-            key: "placeholderSetDeliveryDateOrders",
+            key: "placeholderSetDeliveryDate",
             text: "Set delivery dates",
             icon: "fa func fa-print"
         }]);
 
-        vm.picker = new easepick.create({
+        vm.picker = new datepicker.create({
             element: button,
             css: [ 'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',],
             autoApply: false,
