@@ -53,8 +53,6 @@ define(function(require) {
         vm.onApproveSelectDate = function(){
             let date = "";// format - 2023-09-16T12:47:07.05Z
             vm.selectedOrders = $scope.viewStats.selected_orders.map(i => i.id);
-            console.log(items);
-            console.log(date);
             vm.ordersService.getOrders(vm.selectedOrders, null, true, true, function(response){
                 let orders = response.result;
                 for(let order of orders){
@@ -86,9 +84,9 @@ define(function(require) {
         };
 
         vm.onUpdateGeneralInfo = function (orderId){
-            selectedOrders.splice(selectedOrders.indexOf(orderId), 1);
-            if(!selectedOrders.length){
-                $scope.setPopoverOpen(false);
+            vm.selectedOrders.splice(vm.selectedOrders.indexOf(orderId), 1);
+            if(!vm.selectedOrders.length){
+                vm.setPopoverOpen(false);
             }
         };
     };
