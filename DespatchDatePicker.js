@@ -70,12 +70,12 @@ define(function(require) {
                             From: date,
                             To: date
                         },
-                    }, false, () => $scope.onUpdateGeneralInfo(order.OrderId));// todo: check is draft
+                    }, false, () => vm.onUpdateGeneralInfo(order.OrderId));// todo: check is draft
                 };
             });
         };
 
-        $scope.setPopoverOpen = function(isOpen){
+        vm.setPopoverOpen = function(isOpen){
             if(isOpen){
                 picker.show()
             }else{
@@ -83,7 +83,7 @@ define(function(require) {
             }
         };
 
-        $scope.onUpdateGeneralInfo = function (orderId){
+        vm.onUpdateGeneralInfo = function (orderId){
             selectedOrders.splice(selectedOrders.indexOf(orderId), 1);
             if(!selectedOrders.length){
                 $scope.setPopoverOpen(false);
