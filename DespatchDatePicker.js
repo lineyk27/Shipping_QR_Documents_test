@@ -9,30 +9,15 @@ define(function(require) {
         vm.buttonName = "Set delivery date.";
         vm.ordersService = new Services.OrdersService(vm);
         vm.selectedOrders = [];
+        vm.picker = null;
 
-        vm.button = document.getElementById('datepicker');
+        vm.button = document.querySelector("button[key='placeholderSetDeliveryDate']");
 
         vm.getItems = () => ([{
             key: "placeholderSetDeliveryDate",
             text: "Set delivery dates",
             icon: "fa func fa-print"
         }]);
-
-        vm.picker = new datepicker.create({
-            element: button,
-            css: [ 'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',],
-            autoApply: false,
-            locale: {
-                apply: "Save"
-            },
-            setup(picker){
-                picker.on('select', (e) => {
-                    // const { view, date, target } = e.detail;
-                    $scope.onApproveSelectDate();
-                    button.innerHTML = buttonName;
-                });
-            }
-        });
 
         let watchFunc = $scope.$watch($scope.viewStats.get_selected_orders, function(newVal, oldVal){
             if(newVal && newVal.length){
@@ -46,10 +31,28 @@ define(function(require) {
 
         vm.onClick = function(itemKey, $event){
             selectedOrders = items;
+            if(!vm.picker){
+                vm.picker = new datepicker.create({
+                    element: vm.button,
+                    css: [ 'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',],
+                    autoApply: false,
+                    locale: {
+                        apply: "Save"
+                    },
+                    setup(picker){
+                        picker.on('select', (e) => {
+                            // const { view, date, target } = e.detail;
+                            $scope.onApproveSelectDate();
+                            button.innerHTML = vm.buttonName;
+                        });
+                    }
+                });
+            }
             setPopoverOpen(true);
+
         };
 
-        $scope.onApproveSelectDate = function(){
+        vm.onApproveSelectDate = function(){
             let date = "";// format - 2023-09-16T12:47:07.05Z
             let items = $scope.viewStats.get_selected_orders();
             ordersService.getOrders(items, null, true, true, function(response){
