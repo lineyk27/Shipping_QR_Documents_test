@@ -30,8 +30,9 @@ define(function(require) {
 
         vm.onClick = function(itemKey, $event){
             if(!vm.picker){
+                vm.button = document.querySelectorAll("button[key='placeholderSetDeliveryDate']")[0];
                 vm.picker = new datepicker.create({
-                    element: document.querySelectorAll("button[key='placeholderSetDeliveryDate']")[0],
+                    element: vm.button,
                     css: [ 'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',],
                     autoApply: false,
                     locale: {
@@ -41,7 +42,7 @@ define(function(require) {
                         picker.on('select', (e) => {
                             const { date } = e.detail;
                             vm.onApproveSelectDate(date);
-                            button.innerHTML = vm.buttonName;
+                            vm.button.innerHTML = vm.buttonName;
                         });
                     },
                     zIndex: 100
@@ -55,8 +56,6 @@ define(function(require) {
             vm.ordersService.getOrders(vm.selectedOrders, null, true, true, function(response){
                 let orders = response.result;
                 for(let order of orders){
-                    console.log("seting order general info");
-                    console.log(order);
                     vm.ordersService.setOrderGeneralInfo(order.OrderId, {
                         ReceivedDate: order.GeneralInfo.ReceivedDate,
                         Source: order.GeneralInfo.Source,
