@@ -6,16 +6,16 @@ define(function(require) {
     
     const placeHolder = function ($scope, $element, $http) {
         const vm = this;
-        vm.buttonName = "Set delivery date.";
+        vm.buttonName = "Set delivery date";
         vm.ordersService = new Services.OrdersService(vm);
         vm.selectedOrders = [];
         vm.picker = null;
 
-        vm.button = document.querySelector("button[key='placeholderSetDeliveryDate']");
+        vm.button = document.querySelectorAll("button[key='placeholderSetDeliveryDate']")[0];
 
         vm.getItems = () => ([{
             key: "placeholderSetDeliveryDate",
-            text: "Set delivery dates",
+            text: this.buttonName,
             icon: "fa func fa-print"
         }]);
 
@@ -30,7 +30,6 @@ define(function(require) {
         vm.isEnabled = (itemKey) => true;
 
         vm.onClick = function(itemKey, $event){
-            selectedOrders = items;
             if(!vm.picker){
                 vm.picker = new datepicker.create({
                     element: vm.button,
@@ -48,8 +47,7 @@ define(function(require) {
                     }
                 });
             }
-            setPopoverOpen(true);
-
+            vm.setPopoverOpen(true);
         };
 
         vm.onApproveSelectDate = function(){
