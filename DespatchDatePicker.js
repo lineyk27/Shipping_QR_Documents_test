@@ -11,15 +11,14 @@ define(function(require) {
         vm.selectedOrders = [];
         vm.picker = null;
 
-        vm.button = document.querySelectorAll("button[key='placeholderSetDeliveryDate']")[0];
-
         vm.getItems = () => ([{
             key: "placeholderSetDeliveryDate",
             text: this.buttonName,
-            icon: "fa func fa-print"
+            icon: "fa func fa-truck"
         }]);
 
         let watchFunc = $scope.$watch($scope.viewStats.get_selected_orders, function(newVal, oldVal){
+            console.log(newVal);
             if(newVal && newVal.length){
                 $scope.isEnabled = () => true;
             } else {
@@ -32,7 +31,7 @@ define(function(require) {
         vm.onClick = function(itemKey, $event){
             if(!vm.picker){
                 vm.picker = new datepicker.create({
-                    element: vm.button,
+                    element: document.querySelectorAll("button[key='placeholderSetDeliveryDate']")[0],
                     css: [ 'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',],
                     autoApply: false,
                     locale: {
@@ -41,7 +40,7 @@ define(function(require) {
                     setup(picker){
                         picker.on('select', (e) => {
                             // const { view, date, target } = e.detail;
-                            $scope.onApproveSelectDate();
+                            vm.onApproveSelectDate();
                             button.innerHTML = vm.buttonName;
                         });
                     },
@@ -54,6 +53,8 @@ define(function(require) {
         vm.onApproveSelectDate = function(){
             let date = "";// format - 2023-09-16T12:47:07.05Z
             let items = $scope.viewStats.get_selected_orders();
+            console.log(items);
+            console.log(date);
             ordersService.getOrders(items, null, true, true, function(response){
                 let orders = response.result;
                 for(let order of orders){
