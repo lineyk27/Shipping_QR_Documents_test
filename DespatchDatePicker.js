@@ -66,7 +66,7 @@ define(function(require) {
                         DespatchByDate: order.GeneralInfo.DespatchByDate,
                         ScheduledDelivery: {
                             From: date.format("YYYY-MM-DDTHH:mm:ss.sssZ"),
-                            To: date
+                            To: date.format("YYYY-MM-DDTHH:mm:ss.sssZ")
                         },
                     }, false, () => vm.onUpdateGeneralInfo(order.OrderId));// todo: check is draft
                 };
