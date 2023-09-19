@@ -16,39 +16,43 @@ define(function(require) {
             text: this.buttonName,
             icon: "fa func fa-truck"
         }]);
-
-        let watchFunc = $scope.$watch($scope.viewStats.get_selected_orders, function(newVal, oldVal){
-            console.log(newVal);
-            if(newVal && newVal.length){
-                $scope.isEnabled = () => true;
-            } else {
-                $scope.isEnabled = () => false;
-            }
-        }, true);
-
         vm.isEnabled = (itemKey) => true;
+
+        angular.element(document).ready(function () {
+            vm.button = document.querySelectorAll("button[key='placeholderSetDeliveryDate']")[0];
+            vm.agButton = angular.element(vm.button);
+            vm.buttonInnerHTML = vm.button.innerHTML;
+
+            vm.picker = new datepicker.create({
+                element: vm.button,
+                css: [ 'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',],
+                autoApply: false,
+                locale: {
+                    apply: "Save"
+                },
+                setup(picker){
+                    picker.on('select', (e) => {
+                        const { date } = e.detail;
+                        vm.onApproveSelectDate(date);
+                        agButton.html(vm.buttonInnerHTML);
+                    });
+                },
+                zIndex: 100
+            });
+
+            vm.ordersSelectedWatch = $scope.$watch($scope.viewStats.get_selected_orders, function(newVal, oldVal){
+                console.log(newVal);
+                if(newVal && newVal.length){
+                    $scope.isEnabled = () => true;
+                } else {
+                    $scope.isEnabled = () => false;
+                }
+            }, true);
+        });
 
         vm.onClick = function(itemKey, $event){
             if(!vm.picker){
-                vm.button = document.querySelectorAll("button[key='placeholderSetDeliveryDate']")[0];
-                vm.buttonInnerHTML = vm.button.innerHTML;
-                vm.picker = new datepicker.create({
-                    element: vm.button,
-                    css: [ 'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',],
-                    autoApply: false,
-                    locale: {
-                        apply: "Save"
-                    },
-                    setup(picker){
-                        picker.on('select', (e) => {
-                            const { date } = e.detail;
-                            vm.onApproveSelectDate(date);
-                            let agElem = angular.element(vm.button);
-                            agElem.html(vm.buttonInnerHTML);
-                        });
-                    },
-                    zIndex: 100
-                });
+
             }
             vm.setPopoverOpen(true);
         };
