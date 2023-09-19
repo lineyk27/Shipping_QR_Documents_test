@@ -6,16 +6,16 @@ define(function(require) {
     
     const placeHolder = function ($scope, $element, $http) {
         const vm = this;
-        vm.buttonName = "Set delivery date";
         vm.ordersService = new Services.OrdersService(vm);
         vm.selectedOrders = [];
         vm.picker = null;
 
         vm.getItems = () => ([{
             key: "placeholderSetDeliveryDate",
-            text: this.buttonName,
+            text: "Set delivery date",
             icon: "fa func fa-truck"
         }]);
+
         vm.isEnabled = (itemKey) => true;
 
         angular.element(document).ready(function () {
@@ -41,11 +41,10 @@ define(function(require) {
             });
 
             vm.ordersSelectedWatch = $scope.$watch(() => $scope.viewStats.selected_orders, function(newVal, oldVal){
-                console.log(newVal);
-                if(newVal && newVal.length){
-                    vm.isEnabled = () => true;
+                if (newVal && newVal.length) {
+                    vm.isEnabled = (itemKey) => true;
                 } else {
-                    vm.isEnabled = () => false;
+                    vm.isEnabled = (itemKey) => false;
                 }
             }, true);
         });
@@ -65,13 +64,18 @@ define(function(require) {
                         SubSource: order.GeneralInfo.SubSource,
                         Marker: order.GeneralInfo.Marker,
                         Status: order.GeneralInfo.Status,
-                        HasScheduledDelivery: true,
                         DespatchByDate: order.GeneralInfo.DespatchByDate,
+                        HasScheduledDelivery: true,
                         ScheduledDelivery: {
                             From: date.format("YYYY-MM-DDTHH:mm:ss.sssZ"),
                             To: date.format("YYYY-MM-DDTHH:mm:ss.sssZ")
                         },
-                    }, false, () => vm.onUpdateGeneralInfo(order.OrderId));// todo: check is draft
+                    }, false, (response) => {
+                        if (response.error) {
+                            Core.Dialogs.addNotify(response.error.errorMessage, 'ERROR');
+                        }
+                        vm.onUpdateGeneralInfo(order.OrderId);
+                    });
                 };
             });
         };
