@@ -72,7 +72,7 @@ define(function(require) {
                         },
                     }, false, (response) => {
                         if (response.error) {
-                            Core.Dialogs.addNotify(response.error.errorMessage, 'ERROR');
+                            Core.Dialogs.addNotify(`Error ${order.NumOrderId}:${response.error.errorMessage}`, 'ERROR');
                         }
                         vm.onUpdateGeneralInfo(order.OrderId);
                     });
