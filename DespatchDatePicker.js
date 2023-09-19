@@ -43,9 +43,9 @@ define(function(require) {
             vm.ordersSelectedWatch = $scope.$watch(() => $scope.viewStats.selected_orders, function(newVal, oldVal){
                 console.log(newVal);
                 if(newVal && newVal.length){
-                    $scope.isEnabled = () => true;
+                    vm.isEnabled = () => true;
                 } else {
-                    $scope.isEnabled = () => false;
+                    vm.isEnabled = () => false;
                 }
             }, true);
         });
