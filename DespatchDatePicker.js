@@ -43,7 +43,8 @@ define(function(require) {
                         picker.on('select', (e) => {
                             const { date } = e.detail;
                             vm.onApproveSelectDate(date);
-                            vm.button.innerText = vm.buttonInnerHTML;
+                            let agElem = angular.element(vm.button);
+                            agElem.html(vm.buttonInnerHTML);
                         });
                     },
                     zIndex: 100
