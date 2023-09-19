@@ -34,13 +34,13 @@ define(function(require) {
                     picker.on('select', (e) => {
                         const { date } = e.detail;
                         vm.onApproveSelectDate(date);
-                        agButton.html(vm.buttonInnerHTML);
+                        vm.agButton.html(vm.buttonInnerHTML);
                     });
                 },
                 zIndex: 100
             });
 
-            vm.ordersSelectedWatch = $scope.$watch($scope.viewStats.get_selected_orders, function(newVal, oldVal){
+            vm.ordersSelectedWatch = $scope.$watch(() => $scope.viewStats.selected_orders, function(newVal, oldVal){
                 console.log(newVal);
                 if(newVal && newVal.length){
                     $scope.isEnabled = () => true;
@@ -51,9 +51,6 @@ define(function(require) {
         });
 
         vm.onClick = function(itemKey, $event){
-            if(!vm.picker){
-
-            }
             vm.setPopoverOpen(true);
         };
 
