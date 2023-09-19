@@ -31,6 +31,7 @@ define(function(require) {
         vm.onClick = function(itemKey, $event){
             if(!vm.picker){
                 vm.button = document.querySelectorAll("button[key='placeholderSetDeliveryDate']")[0];
+                vm.buttonInnerHTML = vm.button.innerHTML;
                 vm.picker = new datepicker.create({
                     element: vm.button,
                     css: [ 'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',],
@@ -42,7 +43,7 @@ define(function(require) {
                         picker.on('select', (e) => {
                             const { date } = e.detail;
                             vm.onApproveSelectDate(date);
-                            vm.button.innerText = vm.buttonName;
+                            vm.button.innerText = vm.buttonInnerHTML;
                         });
                     },
                     zIndex: 100
