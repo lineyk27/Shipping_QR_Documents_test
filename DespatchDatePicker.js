@@ -42,7 +42,7 @@ define(function(require) {
                         picker.on('select', (e) => {
                             const { date } = e.detail;
                             vm.onApproveSelectDate(date);
-                            vm.button.innerHTML = vm.buttonName;
+                            vm.button.innerText = vm.buttonName;
                         });
                     },
                     zIndex: 100
@@ -74,9 +74,9 @@ define(function(require) {
         };
 
         vm.setPopoverOpen = function(isOpen){
-            if(isOpen){
+            if (isOpen) {
                 vm.picker.show()
-            }else{
+            } else {
                 vm.picker.hide();
             }
         };
