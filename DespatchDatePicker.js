@@ -65,6 +65,10 @@ define(function(require) {
                         Marker: order.GeneralInfo.Marker,
                         Status: order.GeneralInfo.Status,
                         DespatchByDate: order.GeneralInfo.DespatchByDate,
+                        ReferenceNum: order.GeneralInfo.ReferenceNum,
+                        ExternalReferenceNum: order.GeneralInfo.ExternalReferenceNum,
+                        SecondaryReference: order.GeneralInfo.SecondaryReference,
+                        SiteCode: order.GeneralInfo.SiteCode,
                         HasScheduledDelivery: true,
                         ScheduledDelivery: {
                             From: date.format("YYYY-MM-DDTHH:mm:ss.sssZ"),
