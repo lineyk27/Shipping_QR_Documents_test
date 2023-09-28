@@ -64,16 +64,16 @@ define(function(require) {
                         SubSource: order.GeneralInfo.SubSource,
                         Marker: order.GeneralInfo.Marker,
                         Status: order.GeneralInfo.Status,
-                        DespatchByDate: order.GeneralInfo.DespatchByDate,
+                        DespatchByDate: date.format("YYYY-MM-DDTHH:mm:ss.sssZ"),
                         ReferenceNum: order.GeneralInfo.ReferenceNum,
                         ExternalReferenceNum: order.GeneralInfo.ExternalReferenceNum,
                         SecondaryReference: order.GeneralInfo.SecondaryReference,
                         SiteCode: order.GeneralInfo.SiteCode,
-                        HasScheduledDelivery: true,
-                        ScheduledDelivery: {
-                            From: date.format("YYYY-MM-DDTHH:mm:ss.sssZ"),
-                            To: date.format("YYYY-MM-DDTHH:mm:ss.sssZ")
-                        },
+                        HasScheduledDelivery: order.GeneralInfo.HasScheduledDelivery,
+                        ScheduledDelivery: order.GeneralInfo.HasScheduledDelivery ? {
+                            From: order.GeneralInfo.ScheduledDelivery.From,
+                            To: order.GeneralInfo.ScheduledDelivery.To
+                        } : null,
                     }, false, (response) => {
                         if (response.error) {
                             Core.Dialogs.addNotify(`Error ${order.NumOrderId}:${response.error.errorMessage}`, 'ERROR');
