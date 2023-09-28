@@ -11,15 +11,15 @@ define(function(require) {
         vm.picker = null;
 
         vm.getItems = () => ([{
-            key: "placeholderSetDeliveryDate",
-            text: "Set delivery date",
+            key: "placeholderSetDespatchDate",
+            text: "Set despatch date",
             icon: "fa func fa-truck"
         }]);
 
         vm.isEnabled = (itemKey) => true;
 
         angular.element(document).ready(function () {
-            vm.button = document.querySelectorAll("button[key='placeholderSetDeliveryDate']")[0];
+            vm.button = document.querySelectorAll("button[key='placeholderSetDespatchDate']")[0];
             vm.agButton = angular.element(vm.button);
             vm.buttonInnerHTML = vm.button.innerHTML;
 
