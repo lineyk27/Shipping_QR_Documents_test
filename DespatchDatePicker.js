@@ -90,14 +90,24 @@ define(function(require) {
                 let datePropInd = props.findIndex(prop => prop.Name == 'date');
                 if (datePropInd > -1) {
                     props[datePropInd].Value = date.format('YYYY-MM-DD');
-                    vm.ordersService.setExtendedProperties(order.OrderId, props, callback);
+                    vm.ordersService.setExtendedProperties(order.OrderId, props, responce => {
+                        if (responce.error) {
+                            Core.Dialogs.addNotify(`Error ${order.NumOrderId}:${responce.error.errorMessage}`, 'ERROR');
+                        }
+                        callback();
+                    });
                 } else {
                     vm.ordersService.getOrderNotes(order.OrderId, response => {
                         let notes = response.result;
                         let deliveryNoteInd = notes.findIndex(note => note.Note.indexOf('Delivery - ') > -1);
                         if (deliveryNoteInd > -1) {
                             notes[deliveryNoteInd].Note = 'Delivery - ' + date.format('DD-MM-YYYY');
-                            vm.ordersService.setOrderNotes(order.OrderId, notes, callback);
+                            vm.ordersService.setOrderNotes(order.OrderId, notes, responce => {
+                                if (responce.error) {
+                                    Core.Dialogs.addNotify(`Error ${order.NumOrderId}:${responce.error.errorMessage}`, 'ERROR');
+                                }
+                                callback();
+                            });
                         } else {
                             callback();
                         }
