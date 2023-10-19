@@ -12,7 +12,7 @@ define(function(require) {
 
         vm.getItems = () => ([{
             key: "placeholderSetDespatchDate",
-            text: "Set despatch date",
+            text: "Set despatch date(test)",
             icon: "fa func fa-truck"
         }]);
 
