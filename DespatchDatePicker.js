@@ -78,9 +78,31 @@ define(function(require) {
                         if (response.error) {
                             Core.Dialogs.addNotify(`Error ${order.NumOrderId}:${response.error.errorMessage}`, 'ERROR');
                         }
-                        vm.onUpdateGeneralInfo(order.OrderId);
+                        vm.updatePropertyAndNote(order, date, () => vm.onUpdateGeneralInfo(order.OrderId));
                     });
                 };
+            });
+        };
+
+        vm.updatePropertyAndNote = function(order, date, callback){
+            vm.ordersService.getExtendedProperties(order.OrderId, (response) => {
+                let props = response.data;
+                let datePropInd = props.findIndex(prop => prop.Name == 'date');
+                if (datePropInd > -1) {
+                    props[datePropInd].Value = data.format('YYYY-MM-DD');
+                    vm.ordersService.setExtendedProperties(order.OrderId, props, callback);
+                } else {
+                    vm.ordersService.getOrderNotes(order.OrderId, response => {
+                        let notes = response.data;
+                        let deliveryNoteInd = notes.findIndex(note => note.Note.indexOf('Delivery - ') > -1);
+                        if (deliveryNoteInd) {
+                            notes[deliveryNoteInd].Note = 'Delivery - ' + date.format('DD-MM-YYYY');
+                            vm.ordersService.setOrderNotes(order.OrderId, notes, callback);
+                        } else {
+                            callback();
+                        }
+                    });
+                }
             });
         };
 
