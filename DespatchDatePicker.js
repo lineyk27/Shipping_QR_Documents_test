@@ -86,14 +86,14 @@ define(function(require) {
 
         vm.updatePropertyAndNote = function(order, date, callback){
             vm.ordersService.getExtendedProperties(order.OrderId, (response) => {
-                let props = response.data;
+                let props = response.result;
                 let datePropInd = props.findIndex(prop => prop.Name == 'date');
                 if (datePropInd > -1) {
-                    props[datePropInd].Value = data.format('YYYY-MM-DD');
+                    props[datePropInd].Value = date.format('YYYY-MM-DD');
                     vm.ordersService.setExtendedProperties(order.OrderId, props, callback);
                 } else {
                     vm.ordersService.getOrderNotes(order.OrderId, response => {
-                        let notes = response.data;
+                        let notes = response.result;
                         let deliveryNoteInd = notes.findIndex(note => note.Note.indexOf('Delivery - ') > -1);
                         if (deliveryNoteInd) {
                             notes[deliveryNoteInd].Note = 'Delivery - ' + date.format('DD-MM-YYYY');
