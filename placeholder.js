@@ -106,6 +106,7 @@ define(function(require) {
                             //"data:application/pdf;base64," + docBase64
                             const blob = b64toBlob(docBase64);
                             const blobURL = URL.createObjectURL(blob);
+                            console.log(blobURL);
                             printService.OpenPrintDialog(blobURL);
                         })
                         .catch(error => {
