@@ -103,7 +103,10 @@ define(function(require) {
                             return resultDocument.saveAsBase64();
                         })
                         .then(docBase64 => {
-                            printService.OpenPrintDialog("data:application/pdf;base64," + docBase64);
+                            //"data:application/pdf;base64," + docBase64
+                            const blob = b64toBlob(docBase64);
+                            const blobURL = URL.createObjectURL(blob);
+                            printService.OpenPrintDialog(blobURL);
                         })
                         .catch(error => {
                             handleErrors(error);
@@ -114,6 +117,28 @@ define(function(require) {
             });
             vm.isEnabled = () => true;
         };
+
+        function b64toBlob(content, contentType) {
+            contentType = contentType || '';
+            const sliceSize = 512;
+            // method which converts base64 to binary
+            const byteCharacters = window.atob(content);
+        
+            const byteArrays = [];
+            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                const slice = byteCharacters.slice(offset, offset + sliceSize);
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+            const blob = new Blob(byteArrays, {
+                type: contentType
+            }); // statement which creates the blob
+            return blob;
+        }
 
         function getDocumentIndices(pdfDoc){
             let arr = [];
