@@ -6,17 +6,35 @@ define(function(require) {
 
     const placeHolder = function ($scope) {
         const vm = this;
+        vm.printService = new Services.PrintService(vm);
+        vm.macroService = new Services.MacroService(vm);
 
         vm.getItems = () => ([{
             key: "placeholderPrintShippingDocumentsQR",
-            text: "Štampanje dokumenata(TEST)",
+            text: "Štampanje dokumenata",
             icon: "fa func fa-print"
         }]);
 
         vm.isEnabled = (itemKey) => true;
 
-        vm.onClick = function(itemKey, $event){
-            vm.isEnabled = () => false;
+        vm.setLoading = (isLoading) => {
+            if (isLoading) {
+                vm.isEnabled = (itemKey) => false;
+            }
+            else{
+                vm.isEnabled = (itemKey) => true;
+            }
+        };
+
+        angular.element(document).ready(function () {
+            vm.button = document.querySelectorAll("button[key='placeholderSetDespatchDate']")[0];
+            vm.agButton = angular.element(vm.button);
+            vm.buttonInnerHTML = vm.button.innerHTML;
+            console.log(vm.buttonInnerHTML);
+        });
+
+        vm.onClick = (itemKey, $event) => {
+            vm.setLoading(true);
 
             vm.templateQrs = {
                 "Racun - RS": { x: 417, y: 420, width: 135, height: 112 },
@@ -29,41 +47,38 @@ define(function(require) {
             let items = $scope.viewStats.selected_orders.map(i => i.id);
             
             if (!items || !items.length) {
+                vm.setLoading(false);
                 return;
             };
 
-            const macroService = new Services.MacroService();
             let ordersDocuments = [];
             let totalPages = Math.ceil(items.length / 5);
-            loadFilesRecursion(ordersDocuments, items, 1, totalPages, macroService);
-
-            vm.isEnabled = () => true;
+            vm.loadFilesAndPrint(ordersDocuments, items, 1, totalPages);
         };
 
-        function loadFilesRecursion(documents, allOrderIds, pageNumber, totalPages, macroService){
+        vm.loadFilesAndPrint = (documents, allOrderIds, pageNumber, totalPages) => {
             let pageItems = paginate(allOrderIds, 5, pageNumber);
-            macroService.Run({applicationName: "ShippingQRDocuments_App", macroName: "Shipping_QR_Documents", orderIds: pageItems}, function (result) {
+            vm.macroService.Run({applicationName: "ShippingQRDocuments_App", macroName: "Shipping_QR_Documents", orderIds: pageItems}, function (result) {
                 if (!result.error) {
                     if (result.result.PrintErrors.length > 0) {
                         result.result.PrintErrors.forEach(printError => {
                             Core.Dialogs.addNotify(printError, 'ERROR');
                         });
-                        return;
                     };
-                    documents = documents.concat(documents, result.result.OrderDocuments);
+                    documents = documents.concat(result.result.OrderDocuments);
                     if (pageNumber == totalPages) {
-                        printFiles(documents);
+                        vm.printFiles(documents);
                     } else {
-                        loadFilesRecursion(documents, allOrderIds, pageNumber+1, totalPages, macroService);
+                        vm.loadFilesAndPrint(documents, allOrderIds, pageNumber+1, totalPages, macroService);
                     }
                 } else {
                     Core.Dialogs.addNotify(result.error, 'ERROR');
+                    vm.setLoading(false);
                 }
             });
         }
 
-        function printFiles(ordersDocuments){
-            const printService = new Services.PrintService();
+        vm.printFiles = (ordersDocuments) => {
             let documentPromises = [];
             let resultDocuments = [];
             let docIndex = 0;
@@ -98,6 +113,7 @@ define(function(require) {
                         })
                         .catch(error => {
                             handleErrors(error);
+                            vm.setLoading(false);
                         });
                     documentPromises.push(promise);
                     ++docIndex;
@@ -124,9 +140,11 @@ define(function(require) {
                     const blobURL = URL.createObjectURL(blob);
                     console.log(blobURL);
                     printService.OpenPrintDialog(blobURL);
+                    vm.setLoading(false);
                 })
                 .catch(error => {
                     handleErrors(error);
+                    vm.setLoading(false);
                 });
         }
 
