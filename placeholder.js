@@ -34,95 +34,101 @@ define(function(require) {
 
             const macroService = new Services.MacroService();
             const printService = new Services.PrintService();
+            const totalPages = Math.ceil(items.length / 5);
+            let ordersDocuments = [];
+            for(let i = 1; i < totalPages; i++)
+            {
+                let pageItems = paginate(items, 5, i);
+                macroService.Run({applicationName: "ShippingQRDocuments_App", macroName: "Shipping_QR_Documents", orderIds: pageItems}, function (result) {
+                    if (!result.error) {
 
-            macroService.Run({applicationName: "ShippingQRDocuments_App", macroName: "Shipping_QR_Documents", orderIds: items}, function (result) {
-                if (!result.error) {
-
-                    if (result.result.PrintErrors.length > 0) {
-                        result.result.PrintErrors.forEach(printError => {
-                            Core.Dialogs.addNotify(printError, 'ERROR');
-                        });
-                        return;
-                    };
-
-                    const ordersDocuments = result.result.OrderDocuments;
-
-                    let documentPromises = [];
-                    let resultDocuments = [];
-                    let docIndex = 0;
-                    for (let i = 0; i < ordersDocuments.length; i++) {
-                        let orderDocuments = ordersDocuments[i];
-
-                        for (let j = 0; j < orderDocuments.Documents.length; j++) {
-                            let document = orderDocuments.Documents[j];
-                            let qrTemplate = vm.templateQrs[document.DocumentName];
-                            let order = docIndex;
-                            let promise = pdfLib.PDFDocument.load(document.DocumentBase64)
-                                .then(pdfDocument => {
-                                    if (!!qrTemplate && orderDocuments.QRCodeBase64) {
-                                        return Promise.all([pdfDocument.embedPng(orderDocuments.QRCodeBase64), pdfDocument]);
-                                    }
-                                    return Promise.all([null, pdfDocument]);
-                                })
-                                .then(([image, pdfDocument]) => {
-                                    if (image) {
-                                        let firstPage = pdfDocument.getPages()[0];
-                                        firstPage.drawImage(image, {
-                                            x: qrTemplate.x,
-                                            y: qrTemplate.y,
-                                            width: qrTemplate.width,
-                                            height: qrTemplate.height,
-                                        });
-                                    }
-                                    return pdfDocument;
-                                })
-                                .then(pdfDocument => {
-                                    resultDocuments.push({ index: order, pdfDocument});
-                                })
-                                .catch(error => {
-                                    handleErrors(error);
-                                });
-                            documentPromises.push(promise);
-                            ++docIndex;
-                        }
+                        if (result.result.PrintErrors.length > 0) {
+                            result.result.PrintErrors.forEach(printError => {
+                                Core.Dialogs.addNotify(printError, 'ERROR');
+                            });
+                            return;
+                        };
+                        ordersDocuments = ordersDocuments.concat(ordersDocuments, result.result.OrderDocuments)
                     }
+                });
+            }
 
-                    Promise.all(documentPromises)
-                        .then(() => pdfLib.PDFDocument.create())
-                        .then((resultDocument) => {
-                            let copyPromises = [];
-                            resultDocuments.sort((left, right) => left.index - right.index);
-                            for (let i = 0; i < resultDocuments.length; i++) {
-                                let promise = resultDocument.copyPages(resultDocuments[i].pdfDocument, getDocumentIndices(resultDocuments[i].pdfDocument));
-                                copyPromises.push(promise);
-                            };
-                            return Promise.all([Promise.all(copyPromises), resultDocument]);
+            let documentPromises = [];
+            let resultDocuments = [];
+            let docIndex = 0;
+            for (let i = 0; i < ordersDocuments.length; i++) {
+                let orderDocuments = ordersDocuments[i];
+
+                for (let j = 0; j < orderDocuments.Documents.length; j++) {
+                    let document = orderDocuments.Documents[j];
+                    let qrTemplate = vm.templateQrs[document.DocumentName];
+                    let order = docIndex;
+                    let promise = pdfLib.PDFDocument.load(document.DocumentBase64)
+                        .then(pdfDocument => {
+                            if (!!qrTemplate && orderDocuments.QRCodeBase64) {
+                                return Promise.all([pdfDocument.embedPng(orderDocuments.QRCodeBase64), pdfDocument]);
+                            }
+                            return Promise.all([null, pdfDocument]);
                         })
-                        .then(([docPages, resultDocument]) => {
-                            docPages.forEach(pages => pages.forEach(page => resultDocument.addPage(page)));
-                            return resultDocument.saveAsBase64();
+                        .then(([image, pdfDocument]) => {
+                            if (image) {
+                                let firstPage = pdfDocument.getPages()[0];
+                                firstPage.drawImage(image, {
+                                    x: qrTemplate.x,
+                                    y: qrTemplate.y,
+                                    width: qrTemplate.width,
+                                    height: qrTemplate.height,
+                                });
+                            }
+                            return pdfDocument;
                         })
-                        .then(docBase64 => {
-                            //"data:application/pdf;base64," + docBase64
-                            const blob = b64toBlob(docBase64, 'application/pdf');
-                            const blobURL = URL.createObjectURL(blob);
-                            console.log(blobURL);
-                            printService.OpenPrintDialog(blobURL);
+                        .then(pdfDocument => {
+                            resultDocuments.push({ index: order, pdfDocument});
                         })
                         .catch(error => {
                             handleErrors(error);
                         });
-                } else {
-                    handleErrors(result.error);
-                };
-            });
+                    documentPromises.push(promise);
+                    ++docIndex;
+                }
+            }
+
+            Promise.all(documentPromises)
+                .then(() => pdfLib.PDFDocument.create())
+                .then((resultDocument) => {
+                    let copyPromises = [];
+                    resultDocuments.sort((left, right) => left.index - right.index);
+                    for (let i = 0; i < resultDocuments.length; i++) {
+                        let promise = resultDocument.copyPages(resultDocuments[i].pdfDocument, getDocumentIndices(resultDocuments[i].pdfDocument));
+                        copyPromises.push(promise);
+                    };
+                    return Promise.all([Promise.all(copyPromises), resultDocument]);
+                })
+                .then(([docPages, resultDocument]) => {
+                    docPages.forEach(pages => pages.forEach(page => resultDocument.addPage(page)));
+                    return resultDocument.saveAsBase64();
+                })
+                .then(docBase64 => {
+                    const blob = b64toBlob(docBase64, 'application/pdf');
+                    const blobURL = URL.createObjectURL(blob);
+                    console.log(blobURL);
+                    printService.OpenPrintDialog(blobURL);
+                })
+                .catch(error => {
+                    handleErrors(error);
+                });
+                            
             vm.isEnabled = () => true;
         };
+
+        function paginate(array, page_size, page_number) {
+            // human-readable page numbers usually start with 1, so we reduce 1 in the first argument
+            return array.slice((page_number - 1) * page_size, page_number * page_size);
+        }
 
         function b64toBlob(content, contentType) {
             contentType = contentType || '';
             const sliceSize = 512;
-            // method which converts base64 to binary
             const byteCharacters = window.atob(content);
         
             const byteArrays = [];
@@ -137,7 +143,7 @@ define(function(require) {
             }
             const blob = new Blob(byteArrays, {
                 type: contentType
-            }); // statement which creates the blob
+            });
             return blob;
         }
 
