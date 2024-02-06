@@ -54,7 +54,7 @@ define(function(require) {
                     if (pageNumber == totalPages) {
                         printFiles(ordersDocuments);
                     } else {
-                        loadFilesRecursion(documents, allOrderIds, pageNumber+1, macroService);
+                        loadFilesRecursion(documents, allOrderIds, pageNumber+1, totalPages, macroService);
                     }
                 } else {
                     Core.Dialogs.addNotify(result.error, 'ERROR');
