@@ -33,32 +33,36 @@ define(function(require) {
             };
 
             const macroService = new Services.MacroService();
-            const printService = new Services.PrintService();
-            const totalPages = Math.ceil(items.length / 5);
             let ordersDocuments = [];
-            for(let i = 1; i < totalPages; i++)
-            {
-                let pageItems = paginate(items, 5, i);
-                macroService.Run({applicationName: "ShippingQRDocuments_App", macroName: "Shipping_QR_Documents", orderIds: pageItems}, function (result) {
-                    if (!result.error) {
-                        if (result.result.PrintErrors.length > 0) {
-                            result.result.PrintErrors.forEach(printError => {
-                                Core.Dialogs.addNotify(printError, 'ERROR');
-                            });
-                            return;
-                        };
-                        ordersDocuments = ordersDocuments.concat(ordersDocuments, result.result.OrderDocuments);
-                        if (ordersDocuments.length == items.length) {
-                            printFiles(ordersDocuments);
-                        }
-                    }
-                });
-            }
+            loadFilesRecursion(ordersDocuments, items, 1, macroService);
 
             vm.isEnabled = () => true;
         };
 
+        function loadFilesRecursion(documents, allOrderIds, pageNumber, macroService){
+            let pageItems = paginate(allOrderIds, 5, pageNumber);
+            macroService.Run({applicationName: "ShippingQRDocuments_App", macroName: "Shipping_QR_Documents", orderIds: pageItems}, function (result) {
+                if (!result.error) {
+                    if (result.result.PrintErrors.length > 0) {
+                        result.result.PrintErrors.forEach(printError => {
+                            Core.Dialogs.addNotify(printError, 'ERROR');
+                        });
+                        return;
+                    };
+                    documents = documents.concat(documents, result.result.OrderDocuments);
+                    if (ordersDocuments.length == allOrderIds.length) {
+                        printFiles(ordersDocuments);
+                    } else {
+                        loadFilesRecursion(documents, allOrderIds, pageNumber+1, macroService);
+                    }
+                } else {
+                    Core.Dialogs.addNotify(result.error, 'ERROR');
+                }
+            });
+        }
+
         function printFiles(ordersDocuments, ){
+            const printService = new Services.PrintService();
             let documentPromises = [];
             let resultDocuments = [];
             let docIndex = 0;
