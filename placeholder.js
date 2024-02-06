@@ -12,7 +12,7 @@ define(function(require) {
 
         vm.getItems = () => ([{
             key: "placeholderPrintShippingDocumentsQR",
-            text: "Štampanje dokumenata",
+            text: "Štampanje dokumenata(TEST)",
             icon: "fa func fa-print"
         }]);
 
@@ -30,7 +30,7 @@ define(function(require) {
         };
 
         angular.element(document).ready(function () {
-            vm.button = document.querySelectorAll("button[key='placeholderSetDespatchDate']")[0];
+            vm.button = document.querySelectorAll("button[key='placeholderPrintShippingDocumentsQR']")[0];
             vm.agButton = angular.element(vm.button);
             vm.buttonInnerHTML = vm.button.innerHTML;
             console.log(vm.buttonInnerHTML);
