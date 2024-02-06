@@ -11,7 +11,7 @@ define(function(require) {
 
         vm.getItems = () => ([{
             key: "placeholderPrintShippingDocumentsQR",
-            text: "Štampanje dokumenata",
+            text: "Štampanje dokumenata(TEST)",
             icon: "fa func fa-print"
         }]);
 
