@@ -41,18 +41,24 @@ define(function(require) {
                 let pageItems = paginate(items, 5, i);
                 macroService.Run({applicationName: "ShippingQRDocuments_App", macroName: "Shipping_QR_Documents", orderIds: pageItems}, function (result) {
                     if (!result.error) {
-
                         if (result.result.PrintErrors.length > 0) {
                             result.result.PrintErrors.forEach(printError => {
                                 Core.Dialogs.addNotify(printError, 'ERROR');
                             });
                             return;
                         };
-                        ordersDocuments = ordersDocuments.concat(ordersDocuments, result.result.OrderDocuments)
+                        ordersDocuments = ordersDocuments.concat(ordersDocuments, result.result.OrderDocuments);
+                        if (ordersDocuments.length == items.length) {
+                            printFiles(ordersDocuments);
+                        }
                     }
                 });
             }
 
+            vm.isEnabled = () => true;
+        };
+
+        function printFiles(ordersDocuments, ){
             let documentPromises = [];
             let resultDocuments = [];
             let docIndex = 0;
@@ -117,9 +123,7 @@ define(function(require) {
                 .catch(error => {
                     handleErrors(error);
                 });
-                            
-            vm.isEnabled = () => true;
-        };
+        }
 
         function paginate(array, page_size, page_number) {
             // human-readable page numbers usually start with 1, so we reduce 1 in the first argument
