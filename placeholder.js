@@ -52,7 +52,7 @@ define(function(require) {
                     };
                     documents = documents.concat(documents, result.result.OrderDocuments);
                     if (pageNumber == totalPages) {
-                        printFiles(ordersDocuments);
+                        printFiles(documents);
                     } else {
                         loadFilesRecursion(documents, allOrderIds, pageNumber+1, totalPages, macroService);
                     }
