@@ -34,12 +34,13 @@ define(function(require) {
 
             const macroService = new Services.MacroService();
             let ordersDocuments = [];
-            loadFilesRecursion(ordersDocuments, items, 1, macroService);
+            let totalPages = Math.ceil(items.length / 5);
+            loadFilesRecursion(ordersDocuments, items, 1, totalPages, macroService);
 
             vm.isEnabled = () => true;
         };
 
-        function loadFilesRecursion(documents, allOrderIds, pageNumber, macroService){
+        function loadFilesRecursion(documents, allOrderIds, pageNumber, totalPages, macroService){
             let pageItems = paginate(allOrderIds, 5, pageNumber);
             macroService.Run({applicationName: "ShippingQRDocuments_App", macroName: "Shipping_QR_Documents", orderIds: pageItems}, function (result) {
                 if (!result.error) {
@@ -50,7 +51,7 @@ define(function(require) {
                         return;
                     };
                     documents = documents.concat(documents, result.result.OrderDocuments);
-                    if (ordersDocuments.length == allOrderIds.length) {
+                    if (pageNumber == totalPages) {
                         printFiles(ordersDocuments);
                     } else {
                         loadFilesRecursion(documents, allOrderIds, pageNumber+1, macroService);
@@ -61,7 +62,7 @@ define(function(require) {
             });
         }
 
-        function printFiles(ordersDocuments, ){
+        function printFiles(ordersDocuments){
             const printService = new Services.PrintService();
             let documentPromises = [];
             let resultDocuments = [];
