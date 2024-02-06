@@ -8,10 +8,11 @@ define(function(require) {
         const vm = this;
         vm.printService = new Services.PrintService(vm);
         vm.macroService = new Services.MacroService(vm);
+        vm.loadingHtml = "<i class=\"fa fa-spinner fa-spin\"></i> Set despatch date"
 
         vm.getItems = () => ([{
             key: "placeholderPrintShippingDocumentsQR",
-            text: "Štampanje dokumenata(TEST)",
+            text: "Štampanje dokumenata",
             icon: "fa func fa-print"
         }]);
 
@@ -20,9 +21,11 @@ define(function(require) {
         vm.setLoading = (isLoading) => {
             if (isLoading) {
                 vm.isEnabled = (itemKey) => false;
+                vm.agButton.html(vm.loadingHtml);
             }
             else{
                 vm.isEnabled = (itemKey) => true;
+                vm.agButton.html(vm.buttonInnerHTML);
             }
         };
 
@@ -138,8 +141,7 @@ define(function(require) {
                 .then(docBase64 => {
                     const blob = b64toBlob(docBase64, 'application/pdf');
                     const blobURL = URL.createObjectURL(blob);
-                    console.log(blobURL);
-                    printService.OpenPrintDialog(blobURL);
+                    vm.printService.OpenPrintDialog(blobURL);
                     vm.setLoading(false);
                 })
                 .catch(error => {
