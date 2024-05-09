@@ -190,5 +190,5 @@ define(function(require) {
         };
     };
 
-    placeholderManager.register("OpenOrders_OrderControlButtons", placeHolder);
+    placeholderManager.register("MyInventory_RightTopButtons", placeHolder);
 });
