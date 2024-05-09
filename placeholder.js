@@ -4,6 +4,7 @@ define(function(require) {
     const placeholderManager = require("core/placeholderManager");
     const pdfLib = require("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.js");
 
+    
     const placeHolder = function ($scope) {
         const vm = this;
         vm.printService = new Services.PrintService(vm);
